@@ -1,11 +1,11 @@
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.touch.offset.PointOption;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -21,11 +21,12 @@ public class Test {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability( "platformName", "android");
         capabilities.setCapability( "deviceName", "testDevice");
-        capabilities.setCapability( "platformVersion", "7.0");
+        capabilities.setCapability( "platformVersion", "7.1.1");
         capabilities.setCapability( "appPackage", "dev.akat.filmreel");
         capabilities.setCapability( "appActivity", "com.akat.filmreel.ui.MainActivity");
         capabilities.setCapability( "automationName", "Appium");
         capabilities.setCapability( "app", "/home/sweb/IdeaProjects/HW16_AppiumTests/apk/app_debug.apk");
+        capabilities.setCapability( "orientation", "PORTRAIT");
 
         driver = new AndroidDriver(new URL("http://localhost:4723/wd/hub"), capabilities);
 
@@ -60,6 +61,20 @@ public class Test {
         String value =  element.getText();
         Assert.assertEquals("Поле поиска не очистилось", "", value.trim());
 
+    }
+
+    @org.junit.Test
+    public void testSwipe()
+    {
+        swipeRight();
+        swipeRight();
+    }
+
+    @org.junit.Test
+    public void testOrientation()
+    {
+        changeOrientationToLandscape();
+        swipeRight();
     }
 
     private void clearInput(By by, String error_message, long timeOutInSecond)
@@ -144,4 +159,39 @@ public class Test {
         return generateRandomChars(candidateChars, length);
 
     }
+
+    private void swipe(int fromX, int fromY, int toX, int toY)
+    {
+        TouchAction action = new TouchAction(driver);
+        action.press(PointOption.point(fromX,fromY)).waitAction().moveTo(PointOption.point(toX,toY)).release().perform();
+    }
+
+    private void swipeUp()
+    {
+        Dimension size = driver.manage().window().getSize();
+
+        int x = size.width/2;
+        int start_y = (int)(size.height*0.8);
+        int end_y = (int)(size.height*0.2);
+
+        swipe(x, start_y, x, end_y);
+    }
+
+    private void swipeRight()
+    {
+        Dimension size = driver.manage().window().getSize();
+
+        int start_x = (int)(size.width*0.8);
+        int end_x = (int)(size.width*0.2);
+        int y = size.height/2;
+
+        swipe(start_x, y, end_x, y);
+    }
+
+    private void changeOrientationToLandscape()
+    {
+        driver.rotate(ScreenOrientation.LANDSCAPE);
+    }
+
+
 }
