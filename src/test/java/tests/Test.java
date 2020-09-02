@@ -40,8 +40,8 @@ public class Test extends CoreTestCase {
     @org.junit.Test
     public void test_double_swipe()
     {
-        Main.swipeRight();
-        Main.swipeRight();
+        swipe.swipeRight();
+        swipe.swipeRight();
     }
 
     @org.junit.Test
